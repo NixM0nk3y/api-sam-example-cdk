@@ -1,0 +1,6 @@
+{
+    "Lambda": {
+        "LOG_LEVEL": "DEBUG",
+        "ENVIRONMENT": "development"
+    }
+}

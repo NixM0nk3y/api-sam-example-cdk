@@ -1,0 +1,76 @@
+{
+    "resource": "/version",
+    "path": "/version",
+    "httpMethod": "GET",
+    "headers": {
+        "Content-Length": "0",
+        "Host": "ka3ig45zre.execute-api.eu-west-1.amazonaws.com",
+        "User-Agent": "curl/7.68.0",
+        "X-Amzn-Trace-Id": "Root=1-6182f284-52b2bd0074e2294c678ea387",
+        "X-Forwarded-For": "81.109.20.10",
+        "X-Forwarded-Port": "443",
+        "X-Forwarded-Proto": "https",
+        "accept": "*/*"
+    },
+    "multiValueHeaders": {
+        "Content-Length": [
+            "0"
+        ],
+        "Host": [
+            "ka3ig45zre.execute-api.eu-west-1.amazonaws.com"
+        ],
+        "User-Agent": [
+            "curl/7.68.0"
+        ],
+        "X-Amzn-Trace-Id": [
+            "Root=1-6182f284-52b2bd0074e2294c678ea387"
+        ],
+        "X-Forwarded-For": [
+            "81.109.20.10"
+        ],
+        "X-Forwarded-Port": [
+            "443"
+        ],
+        "X-Forwarded-Proto": [
+            "https"
+        ],
+        "accept": [
+            "*/*"
+        ]
+    },
+    "queryStringParameters": null,
+    "multiValueQueryStringParameters": null,
+    "pathParameters": null,
+    "stageVariables": null,
+    "requestContext": {
+        "accountId": "074705540277",
+        "resourceId": "GET /version",
+        "stage": "$default",
+        "domainName": "ka3ig45zre.execute-api.eu-west-1.amazonaws.com",
+        "domainPrefix": "ka3ig45zre",
+        "requestId": "IPrUsg-MDoEEM-A=",
+        "protocol": "HTTP/1.1",
+        "identity": {
+            "cognitoIdentityPoolId": "",
+            "accountId": "",
+            "cognitoIdentityId": "",
+            "caller": "",
+            "apiKey": "",
+            "apiKeyId": "",
+            "accessKey": "",
+            "sourceIp": "81.109.20.10",
+            "cognitoAuthenticationType": "",
+            "cognitoAuthenticationProvider": "",
+            "userArn": "",
+            "userAgent": "curl/7.68.0",
+            "user": ""
+        },
+        "resourcePath": "/version",
+        "authorizer": null,
+        "httpMethod": "GET",
+        "requestTime": "03/Nov/2021:20:35:16 +0000",
+        "requestTimeEpoch": 1635971716211,
+        "apiId": "ka3ig45zre"
+    },
+    "body": ""
+}
