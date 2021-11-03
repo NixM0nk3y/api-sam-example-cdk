@@ -35,7 +35,7 @@ MIT
 
  * `make deploy`          deploy this stack to your default AWS account/region
  * `make sam/test/hello`  call the hello endpoint
- * `make sam/test/hello`  call the version endpoint
+ * `make sam/test/version`  call the version endpoint
 
 ## Notes
 
