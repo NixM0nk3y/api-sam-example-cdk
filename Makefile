@@ -78,6 +78,8 @@ sam/test/version: sam/build
 sam/test/hello: sam/build
 	@sam-beta-cdk local invoke "OpenenterpriseProductionSamAppStack/Lambda" --env-vars ./test/testenvironment.json --event ./test/events/hello.json
 
+sam/test/api: sam/build
+	@sam-beta-cdk local start-api --env-vars ./test/testenvironment.json
 
 .PHONY: stacks/build $(STACKS)
 

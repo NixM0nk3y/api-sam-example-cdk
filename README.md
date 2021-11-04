@@ -33,8 +33,9 @@ MIT
 
 ## Useful commands
 
- * `make deploy`          deploy this stack to your default AWS account/region
- * `make sam/test/hello`  call the hello endpoint
+ * `make deploy`            deploy this stack to your default AWS account/region
+ * `make sam/test/api`      start the api
+ * `make sam/test/hello`    call the hello endpoint
  * `make sam/test/version`  call the version endpoint
 
 ## Notes
