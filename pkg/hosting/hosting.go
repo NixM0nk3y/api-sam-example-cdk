@@ -1,31 +1,23 @@
 package hosting
 
 import (
-	"fmt"
-	"os"
-	"time"
-
 	"github.com/aws/aws-cdk-go/awscdk"
 	"github.com/aws/aws-cdk-go/awscdk/awsapigatewayv2"
 	"github.com/aws/aws-cdk-go/awscdk/awsapigatewayv2integrations"
 	"github.com/aws/aws-cdk-go/awscdk/awslambda"
-	"github.com/aws/aws-cdk-go/awscdk/awslambdago"
 	"github.com/aws/aws-cdk-go/awscdk/awslogs"
+	"github.com/aws/aws-cdk-go/awscdk/awss3assets"
 	"github.com/aws/jsii-runtime-go"
 
 	"github.com/aws/constructs-go/constructs/v3"
 )
 
-type CommandHooks struct {
+type LocalBundling struct {
 }
 
 // needed to allow sam local testing
-func (c CommandHooks) AfterBundling(inputDir *string, outputDir *string) *[]*string {
-	return jsii.Strings(fmt.Sprintf("cp ../../test/sam.Makefile %s/Makefile", *outputDir))
-}
-
-func (c CommandHooks) BeforeBundling(inputDir *string, outputDir *string) *[]*string {
-	return &[]*string{}
+func (c LocalBundling) TryBundle(outputDir *string, options *awscdk.BundlingOptions) *bool {
+	return jsii.Bool(false)
 }
 
 type HostingProps struct {
@@ -39,48 +31,28 @@ func HostingStack(scope constructs.Construct, id string, props *HostingProps) aw
 
 	construct := awscdk.NewConstruct(scope, &id)
 
-	buildNumber, ok := os.LookupEnv("CODEBUILD_BUILD_NUMBER")
-	if !ok {
-		// default version
-		buildNumber = "0"
-	}
-
-	sourceVersion, ok := os.LookupEnv("CODEBUILD_RESOLVED_SOURCE_VERSION")
-	if !ok {
-		sourceVersion = "unknown"
-	}
-
-	buildDate, ok := os.LookupEnv("BUILD_DATE")
-	if !ok {
-		t := time.Now()
-		buildDate = t.Format("20060102")
-	}
-
 	// Go build options
-	bundlingOptions := &awslambdago.BundlingOptions{
-		GoBuildFlags: &[]*string{jsii.String(fmt.Sprintf(`-ldflags "-s -w
-			-X api/pkg/version.Version=1.0.%s
-			-X api/pkg/version.BuildHash=%s
-			-X api/pkg/version.BuildDate=%s
-			"`,
-			buildNumber,
-			sourceVersion,
-			buildDate,
-		)),
-		},
-		Environment: &map[string]*string{
-			"GOARCH":      jsii.String("amd64"),
-			"GO111MODULE": jsii.String("on"),
-			"GOOS":        jsii.String("linux"),
-		},
-		CommandHooks: &CommandHooks{},
+	bundlingOptions := &awscdk.BundlingOptions{
+		Image:       awslambda.Runtime_PROVIDED_AL2().BundlingDockerImage(),
+		OutputType:  awscdk.BundlingOutput_ARCHIVED,
+		Environment: &map[string]*string{},
+		Command: jsii.Strings(
+			"bash", "-c",
+			"make", "lambda/package",
+		),
+		Local: &LocalBundling{},
 	}
 
 	// webhook lambda
-	apiLambda := awslambdago.NewGoFunction(construct, jsii.String("Lambda"), &awslambdago.GoFunctionProps{
-		Runtime:      awslambda.Runtime_PROVIDED_AL2(),
-		Entry:        jsii.String("resources/api/cmd/api"),
-		Bundling:     bundlingOptions,
+	apiLambda := awslambda.NewFunction(construct, jsii.String("Lambda"), &awslambda.FunctionProps{
+		Runtime: awslambda.Runtime_PROVIDED_AL2(),
+		Handler: jsii.String("app.handler"),
+		Code: awslambda.AssetCode_FromAsset(
+			jsii.String("./resources/api"),
+			&awss3assets.AssetOptions{
+				Bundling: bundlingOptions,
+			},
+		),
 		Tracing:      awslambda.Tracing_ACTIVE,
 		LogRetention: awslogs.RetentionDays_ONE_WEEK,
 		Architectures: &[]awslambda.Architecture{
@@ -89,7 +61,6 @@ func HostingStack(scope constructs.Construct, id string, props *HostingProps) aw
 		Environment: &map[string]*string{
 			"LOG_LEVEL": jsii.String("DEBUG"),
 		},
-		ModuleDir: jsii.String("resources/api/go.mod"),
 	})
 
 	//
@@ -111,10 +82,22 @@ func HostingStack(scope constructs.Construct, id string, props *HostingProps) aw
 
 	httpapi.AddRoutes(&awsapigatewayv2.AddRoutesOptions{
 		Integration: apiIntegration,
-		Path:        jsii.String("/hello"),
+		Path:        jsii.String("/"),
 		Methods: &[]awsapigatewayv2.HttpMethod{
 			awsapigatewayv2.HttpMethod_GET,
 		},
+	})
+
+	awscdk.NewCfnOutput(construct, jsii.String("APIEndpoint"), &awscdk.CfnOutputProps{
+		Value: awscdk.Fn_Sub(jsii.String("https://${ExampleSamAPI}.execute-api.${AWS::Region}.amazonaws.com"), &map[string]*string{
+			"ExampleSamAPI": httpapi.HttpApiId(),
+		}),
+		Description: jsii.String("API Gateway Endpoint URL"),
+	})
+
+	awscdk.NewCfnOutput(construct, jsii.String("FunctionARN"), &awscdk.CfnOutputProps{
+		Value:       apiLambda.FunctionArn(),
+		Description: jsii.String("Lambda Function ARN"),
 	})
 
 	return construct
