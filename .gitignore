@@ -21,6 +21,7 @@ cdk.context.json
 
 # sam
 .aws-sam
+.deno_dir
 
 #
 /application

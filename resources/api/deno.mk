@@ -61,16 +61,16 @@ else
 DOWNLOAD := $(shell \
 if command -v curl >/dev/null; then echo "curl -Lo $(DENO_ZIP) $(RELEASE_URL)"; else \
 if command -v wget >/dev/null; then echo "wget -O $(DENO_ZIP) $(RELEASE_URL)"; else \
-exit 1; fi; fi)
-ifneq ($(.SHELLSTATUS),0)
+echo "notfound"; fi; fi)
+ifeq ($(DOWNLOAD),notfound)
 $(error Cannot find program to download deno)
 endif
 UNZIP := $(shell \
 if command -v unzip >/dev/null; then echo "unzip $(DENO_ZIP) -d $(DENO_DIR)/bin"; else \
 if command -v bsdtar >/dev/null; then echo "bsdtar xf $(DENO_ZIP) -C $(DENO_DIR)/bin"; else \
 if command -v tar >/dev/null && tar --version | grep bsdtar >/dev/null; then echo "tar xf $(DENO_ZIP) -C $(DENO_DIR)/bin"; else \
-exit 1; fi; fi; fi)
-ifneq ($(.SHELLSTATUS),0)
+echo "notfound"; fi; fi; fi)
+ifeq ($(UNZIP),notfound)
 $(error Cannot find program to unzip deno)
 endif
 endif

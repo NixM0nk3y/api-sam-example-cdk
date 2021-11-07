@@ -38,7 +38,7 @@ func HostingStack(scope constructs.Construct, id string, props *HostingProps) aw
 		Environment: &map[string]*string{},
 		Command: jsii.Strings(
 			"bash", "-c",
-			"make", "lambda/package",
+			"make lambda/package",
 		),
 		Local: &LocalBundling{},
 	}
