@@ -3,8 +3,8 @@ package stacks
 import (
 	"api-sam-example-cdk/pkg/hosting"
 
-	"github.com/aws/aws-cdk-go/awscdk"
-	"github.com/aws/constructs-go/constructs/v3"
+	"github.com/aws/aws-cdk-go/awscdk/v2"
+	"github.com/aws/constructs-go/constructs/v10"
 )
 
 type ApplicationProps struct {
