@@ -3,10 +3,12 @@ package api
 import (
 	"net/http"
 
+	"api/pkg/awsemf"
 	"api/pkg/log"
 	"api/pkg/util"
 
 	"github.com/go-chi/render"
+	"github.com/prozz/aws-embedded-metrics-golang/emf"
 )
 
 type ErrResponse struct {
@@ -47,6 +49,10 @@ func HelloWorldHandler(w http.ResponseWriter, r *http.Request) {
 	logger.Debug("EventHandler")
 
 	util.RequestDump(r)
+
+	metricslogger := awsemf.GetEMF(r.Context())
+
+	metricslogger.Dimension("openenterprise", "hello").MetricAs("apitime", 666, emf.Milliseconds)
 
 	render.Render(w, r, &helloworldResponse{
 		Status:  200,

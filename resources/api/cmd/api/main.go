@@ -6,6 +6,7 @@ import (
 	"api/internal/api"
 	"api/internal/config"
 
+	"api/pkg/awsemf"
 	"api/pkg/log"
 	"api/pkg/log/chilogger"
 	"api/pkg/version"
@@ -17,6 +18,7 @@ import (
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/render"
+	"github.com/prozz/aws-embedded-metrics-golang/emf"
 	"go.uber.org/zap"
 )
 
@@ -61,7 +63,14 @@ func Handler(ctx context.Context, req events.APIGatewayProxyRequest) (events.API
 
 	logger.Debug("recieved event", zap.Reflect("req", req))
 
+	ctx = awsemf.NewEMF(ctx)
+
 	vctx := config.ReadEnvConfig(ctx, "APPLICATION")
+
+	metricslogger := awsemf.GetEMF(ctx)
+	defer metricslogger.Log()
+
+	metricslogger.Dimension("openenterprise", "lambda").MetricAs("Invokes", 1, emf.None)
 
 	return chiLambda.ProxyWithContext(vctx, req)
 }

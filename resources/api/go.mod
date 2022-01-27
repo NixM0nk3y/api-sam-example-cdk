@@ -13,6 +13,7 @@ require (
 	github.com/go-chi/render v1.0.1
 	github.com/google/go-cmp v0.5.6 // indirect
 	github.com/kelseyhightower/envconfig v1.4.0
+	github.com/prozz/aws-embedded-metrics-golang v1.2.0
 	go.uber.org/zap v1.18.1
 	golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1 // indirect
 )

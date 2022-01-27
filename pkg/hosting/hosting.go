@@ -93,16 +93,20 @@ func HostingStack(scope constructs.Construct, id string, props *HostingProps) co
 	httpapi := awscdkapigatewayv2alpha.NewHttpApi(construct, jsii.String("ExampleSamAPI"), &awscdkapigatewayv2alpha.HttpApiProps{})
 
 	// POST
-	apiIntegration := awscdkapigatewayv2integrationsalpha.NewHttpLambdaIntegration(jsii.String("helloworld"), apiLambda, &awscdkapigatewayv2integrationsalpha.HttpLambdaIntegrationProps{
+	versionIntegration := awscdkapigatewayv2integrationsalpha.NewHttpLambdaIntegration(jsii.String("version"), apiLambda, &awscdkapigatewayv2integrationsalpha.HttpLambdaIntegrationProps{
 		PayloadFormatVersion: awscdkapigatewayv2alpha.PayloadFormatVersion_VERSION_1_0(),
 	})
 
 	httpapi.AddRoutes(&awscdkapigatewayv2alpha.AddRoutesOptions{
-		Integration: apiIntegration,
+		Integration: versionIntegration,
 		Path:        jsii.String("/version"),
 		Methods: &[]awscdkapigatewayv2alpha.HttpMethod{
 			awscdkapigatewayv2alpha.HttpMethod_GET,
 		},
+	})
+
+	apiIntegration := awscdkapigatewayv2integrationsalpha.NewHttpLambdaIntegration(jsii.String("helloworld"), apiLambda, &awscdkapigatewayv2integrationsalpha.HttpLambdaIntegrationProps{
+		PayloadFormatVersion: awscdkapigatewayv2alpha.PayloadFormatVersion_VERSION_1_0(),
 	})
 
 	httpapi.AddRoutes(&awscdkapigatewayv2alpha.AddRoutesOptions{
